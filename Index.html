@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Crownbest School - Official Application</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Noto+Sans:wght@300..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "primary-dark": "#0b5cb5",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2633",
+                        "border-light": "#e7edf3",
+                        "border-dark": "#2a3b4d",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <!-- React & Router Dependencies -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <style>
+        /* Custom scrollbar hiding for horizontal scrolls */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display overflow-x-hidden antialiased transition-colors duration-200">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        // --- Common Components ---
+
+        const Navigation = () => {
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+            const location = useLocation();
+
+            const isActive = (path) => location.pathname === path ? "text-primary font-bold" : "text-slate-600 dark:text-slate-300 hover:text-primary transition-colors font-medium";
+
+            return (
+                <nav class="sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-[#101922]/95 backdrop-blur-sm w-full">
+                    <div class="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+                        <div class="flex h-16 items-center justify-between">
+                            {/* Logo */}
+                            <Link to="/" class="flex items-center gap-3">
+                                <div class="text-primary">
+                                    <span class="material-symbols-outlined text-4xl">school</span>
+                                </div>
+                                <h2 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white hidden sm:block">Crownbest School</h2>
+                            </Link>
+
+                            {/* Desktop Links */}
+                            <div class="hidden md:flex items-center gap-6">
+                                <Link class={`text-sm ${isActive("/")}`} to="/">Home</Link>
+                                <Link class={`text-sm ${isActive("/about")}`} to="/about">About Us</Link>
+                                <Link class={`text-sm ${isActive("/programs")}`} to="/programs">Academics</Link>
+                                <Link class={`text-sm ${isActive("/admissions")}`} to="/admissions">Admissions</Link>
+                                <Link class={`text-sm ${isActive("/news")}`} to="/news">News</Link>
+                                <Link class={`text-sm ${isActive("/gallery")}`} to="/gallery">Gallery</Link>
+                                <Link class={`text-sm ${isActive("/staff")}`} to="/staff">Staff</Link>
+                                <Link class={`text-sm ${isActive("/testimonials")}`} to="/testimonials">Stories</Link>
+                                <Link class={`text-sm ${isActive("/contact")}`} to="/contact">Contact</Link>
+                            </div>
+
+                            {/* CTAs */}
+                            <div class="hidden md:flex gap-3">
+                                <button class="flex h-10 items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-800 px-4 text-sm font-bold text-slate-900 dark:text-white transition hover:bg-slate-300 dark:hover:bg-slate-700">
+                                    <span class="truncate">Portal Login</span>
+                                </button>
+                                <Link to="/admissions" class="flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-bold text-white shadow-sm transition hover:bg-blue-600">
+                                    <span class="truncate">Apply Now</span>
+                                </Link>
+                            </div>
+
+                            {/* Mobile Menu Button */}
+                            <div class="flex md:hidden">
+                                <button 
+                                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                    class="text-slate-700 dark:text-slate-200 hover:text-primary" 
+                                    type="button"
+                                >
+                                    <span class="material-symbols-outlined">menu</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Mobile Menu */}
+                    {isMobileMenuOpen && (
+                        <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-4 px-4 flex flex-col gap-4">
+                            <Link onClick={() => setIsMobileMenuOpen(false)} class={`text-sm ${isActive("/")}`} to="/">Home</Link>
+                            <Link onClick={() => setIsMobileMenuOpen(false)} class={`text-sm ${isActive("/about")}`} to="/about">About Us</Link>
+                            <Link onClick={() => setIsMobileMenuOpen(false)} class={`text-sm ${isActive("/programs")}`} to="/programs">Academics</Link>
+                            <Link onClick={() => setIsMobileMenuOpen(false)} class={`text-sm ${isActive("/admissions")}`} to="/admissions">Admissions</Link>
+                            <Link onClick={() => setIsMobileMenuOpen(false)} class={`text-sm ${isActive("/news")}`} to="/news">News</Link>
+                            <Link onClick={() => setIsMobileMenuOpen(false)} class={`text-sm ${isActive("/gallery")}`} to="/gallery">Gallery</Link>
+                            <Link onClick={() => setIsMobileMenuOpen(false)} class={`text-sm ${isActive("/staff")}`} to="/staff">Staff</Link>
+                            <Link onClick={() => setIsMobileMenuOpen(false)} class={`text-sm ${isActive("/testimonials")}`} to="/testimonials">Stories</Link>
+                            <Link onClick={() => setIsMobileMenuOpen(false)} class={`text-sm ${isActive("/contact")}`} to="/contact">Contact</Link>
+                        </div>
+                    )}
+                </nav>
+            );
+        };
+
+        const Footer = () => (
+            <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101922] pt-16 pb-8">
+                <div class="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+                    <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+                        {/* Column 1: Brand */}
+                        <div class="flex flex-col gap-4">
+                            <div class="flex items-center gap-2 text-slate-900 dark:text-white">
+                                <span class="material-symbols-outlined text-3xl text-primary">school</span>
+                                <span class="text-lg font-bold">Crownbest School</span>
+                            </div>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">
+                                Empowering the next generation with knowledge, character, and skills for the future.
+                            </p>
+                            <div class="flex gap-4 text-slate-400">
+                                <a class="hover:text-primary" href="#"><span class="material-symbols-outlined text-[20px]">public</span></a>
+                                <a class="hover:text-primary" href="#"><span class="material-symbols-outlined text-[20px]">mail</span></a>
+                            </div>
+                        </div>
+                        {/* Column 2: Quick Links */}
+                        <div>
+                            <h3 class="mb-4 font-bold text-slate-900 dark:text-white">Quick Links</h3>
+                            <ul class="flex flex-col gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                <li><Link class="hover:text-primary" to="/about">About Us</Link></li>
+                                <li><Link class="hover:text-primary" to="/admissions">Admissions Process</Link></li>
+                                <li><Link class="hover:text-primary" to="/programs">Academics</Link></li>
+                                <li><Link class="hover:text-primary" to="/news">News & Events</Link></li>
+                                <li><Link class="hover:text-primary" to="/contact">Contact Us</Link></li>
+                            </ul>
+                        </div>
+                        {/* Column 3: Contact */}
+                        <div>
+                            <h3 class="mb-4 font-bold text-slate-900 dark:text-white">Contact Us</h3>
+                            <ul class="flex flex-col gap-4 text-sm text-slate-600 dark:text-slate-400">
+                                <li class="flex items-start gap-3">
+                                    <span class="material-symbols-outlined text-primary">location_on</span>
+                                    <span>123 Scholar Avenue, Education District, City, Country</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-primary">call</span>
+                                    <span>+1 (234) 567-8900</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-primary">mail</span>
+                                    <span>admissions@crownbest.edu</span>
+                                </li>
+                            </ul>
+                        </div>
+                        {/* Column 4: Newsletter */}
+                        <div>
+                            <h3 class="mb-4 font-bold text-slate-900 dark:text-white">Stay Updated</h3>
+                            <p class="mb-4 text-sm text-slate-600 dark:text-slate-400">Subscribe to our newsletter for the latest updates and events.</p>
+                            <form class="flex flex-col gap-2" onSubmit={(e) => e.preventDefault()}>
+                                <input class="h-10 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-sm placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Enter your email" type="email"/>
+                                <button class="h-10 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold transition hover:bg-primary dark:hover:bg-slate-200">Subscribe</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200 dark:border-slate-800 pt-8 sm:flex-row text-sm text-slate-500">
+                        <p>© 2024 Crownbest School. All rights reserved.</p>
+                        <div class="flex gap-6">
+                            <a class="hover:text-primary" href="#">Privacy Policy</a>
+                            <a class="hover:text-primary" href="#">Terms of Service</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        );
+
+        // --- Screens ---
+
+        const HomePage = () => {
+            return (
+                <div class="animate-fade-in">
+                    {/* Hero Section */}
+                    <section class="relative">
+                        <div class="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 lg:px-8">
+                            <div class="overflow-hidden rounded-2xl bg-slate-900 shadow-xl">
+                                <div class="relative min-h-[560px] w-full flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat p-8 text-center" style={{backgroundImage: 'linear-gradient(rgba(16, 25, 34, 0.4), rgba(16, 25, 34, 0.7)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAJuwLqpeTNhCLGkQtifX5XgVaRUA6Rav12Qt27cNVcL-eqWZWHMnQKgDW3JpwaVPiRRZtUPCbDTeg9wp9mgUZdZr1Dwep8RKvRfxtbP_7oY_x-tWT1xUkxEM4wB8KKoBIaddQMRi8iOyrGc_dh5ZRXXpAx-qXT03Z_t52pCa46tQT0JPoWGahTbx1iPlBoWZmuya62B0ANNJCP935EZlf_kIVCStkSZUWxkbIs8oPWuVL4lMDEJKgHHYWAj-ou1tKNxqx9dMzwKTU")'}}>
+                                    <div class="max-w-3xl flex flex-col items-center gap-6">
+                                        <span class="inline-block rounded-full bg-primary/20 px-4 py-1.5 text-sm font-semibold text-sky-100 backdrop-blur-sm border border-white/10">
+                                            Admissions Open for 2024/2025
+                                        </span>
+                                        <h1 class="text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl md:text-6xl">
+                                            Welcome to <span class="text-primary">Crownbest</span> School
+                                        </h1>
+                                        <p class="text-lg font-medium leading-relaxed text-slate-200 sm:text-xl">
+                                            Nurturing Excellence from Creche to Secondary. We provide a safe, stimulating environment for both Day and Boarding students.
+                                        </p>
+                                        <div class="mt-4 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                                            <Link to="/admissions" class="flex h-12 w-full sm:w-auto min-w-[160px] items-center justify-center rounded-lg bg-primary px-6 text-base font-bold text-white transition hover:bg-blue-600 focus:outline-none">
+                                                Enroll Today
+                                            </Link>
+                                            <Link to="/contact" class="flex h-12 w-full sm:w-auto min-w-[160px] items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm px-6 text-base font-bold text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50">
+                                                Schedule a Tour
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Stats Banner */}
+                    <section class="py-6">
+                        <div class="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                                <div class="flex flex-col gap-1 rounded-xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                                    <div class="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30 text-primary">
+                                        <span class="material-symbols-outlined">trending_up</span>
+                                    </div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Average Pass Rate</p>
+                                    <p class="text-3xl font-bold text-slate-900 dark:text-white">100%</p>
+                                </div>
+                                <div class="flex flex-col gap-1 rounded-xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                                    <div class="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
+                                        <span class="material-symbols-outlined">verified</span>
+                                    </div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Excellence</p>
+                                    <p class="text-3xl font-bold text-slate-900 dark:text-white">20+ Years</p>
+                                </div>
+                                <div class="flex flex-col gap-1 rounded-xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                                    <div class="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+                                        <span class="material-symbols-outlined">home_work</span>
+                                    </div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Facilities</p>
+                                    <p class="text-3xl font-bold text-slate-900 dark:text-white">Day & Boarding</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Academic Programs Preview */}
+                    <section class="py-16 md:py-24">
+                        <div class="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+                            <div class="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                                <div class="max-w-2xl">
+                                    <h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                                        Academic Programs
+                                    </h2>
+                                    <p class="mt-4 text-lg text-slate-600 dark:text-slate-300">
+                                        We offer comprehensive education tailored to every stage of your child's development, from their first steps to their final exams.
+                                    </p>
+                                </div>
+                                <Link class="group flex items-center gap-1 text-sm font-bold text-primary hover:text-blue-700" to="/programs">
+                                    View full curriculum 
+                                    <span class="material-symbols-outlined text-lg transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                </Link>
+                            </div>
+                            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                {/* Creche */}
+                                <div class="group flex flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm transition hover:shadow-md border border-slate-100 dark:border-slate-700">
+                                    <div class="aspect-video w-full overflow-hidden bg-slate-100">
+                                        <div class="h-full w-full bg-cover bg-center transition duration-500 group-hover:scale-105" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDIN5s7fIaMR0li1Fq58GoD4Lja-32zNjVFxDBtx9cIhxpZ-fQxFdXO3PXs7B7Dybv3dTeo89MrctXfiVo_3_3XBKWh-lkmGebBw_q5z0fSBYA7ExUc42ORWVMZfH8uTjIuHdzg0i4qmes4Y5zi4sZHmvf93b8D4s-UoK9Snb6p343LI451NrSC1dhvaRI9lbwAhRfud2sEwNBMJp_4XGjozAYUIVOCZDt0s6dxWnpXhmwNKxTZn95fH6FVgYGR7wiZrqvbvIioVRY")'}}></div>
+                                    </div>
+                                    <div class="flex flex-1 flex-col p-6">
+                                        <div class="mb-3 flex h-8 w-8 items-center justify-center rounded bg-orange-100 text-orange-600">
+                                            <span class="material-symbols-outlined text-lg">child_care</span>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Creche & Nursery</h3>
+                                        <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                                            Safe, stimulating, and affectionate early care for toddlers. We focus on sensory play and social interaction.
+                                        </p>
+                                        <Link class="mt-4 inline-flex items-center text-sm font-bold text-primary" to="/programs">Learn more</Link>
+                                    </div>
+                                </div>
+                                {/* Primary */}
+                                <div class="group flex flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm transition hover:shadow-md border border-slate-100 dark:border-slate-700">
+                                    <div class="aspect-video w-full overflow-hidden bg-slate-100">
+                                        <div class="h-full w-full bg-cover bg-center transition duration-500 group-hover:scale-105" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuD4BLDIJnAmHCTyTFto4_KYaLTSATZlcmm8c8T2kwidRTP5Y1T9szU4jU5A-B4wozJKYgMAsdMix5ZyfMIle_O3nAoGJwJOunapn2I7dm0q6UeTG0JmaObAKn3R9iU2uyqNhcHl5f9yaCIY4xwSVajcTFgTNLVioi7wsp_M6H37F7dgKwX4p_e-VunQLxOTdB_f0L3bE-yNj-RnxKnYrDL0IdLcu_9o1vHnw8b6TCfh_rxAyB3ERJMrkrwrE8QXGVGqjE5Kb1nrXQQ")'}}></div>
+                                    </div>
+                                    <div class="flex flex-1 flex-col p-6">
+                                        <div class="mb-3 flex h-8 w-8 items-center justify-center rounded bg-blue-100 text-blue-600">
+                                            <span class="material-symbols-outlined text-lg">menu_book</span>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Primary Education</h3>
+                                        <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                                            Building strong foundations in literacy, numeracy, and critical thinking through an engaging curriculum.
+                                        </p>
+                                        <Link class="mt-4 inline-flex items-center text-sm font-bold text-primary" to="/programs">Learn more</Link>
+                                    </div>
+                                </div>
+                                {/* Secondary */}
+                                <div class="group flex flex-col overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm transition hover:shadow-md border border-slate-100 dark:border-slate-700">
+                                    <div class="aspect-video w-full overflow-hidden bg-slate-100">
+                                        <div class="h-full w-full bg-cover bg-center transition duration-500 group-hover:scale-105" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAuzrLAmyN2Gylmx9ZB5Zx67Pvsw48SZsKdYmN8dMfTFtU3pz0l_hCIO4CvUzmL-nKGMNTmfGV8G8Io1ynPadnpwD9SzzDLvEqouQvd0eWkLWysInBJgu5zRWc3qXcjF34ihh792OYuu849WK9F-IzxZ5oI5zN-7soAP7i_XC52P5k_wT1xvzG8_qwqlKp2YB2yEZbAtWkORjtmroSWssLL76F-duf7hWbBJRMDvLgEgyAvcDib_mcMSLE9brvAxJ_Xjs0NapIIOyU")'}}></div>
+                                    </div>
+                                    <div class="flex flex-1 flex-col p-6">
+                                        <div class="mb-3 flex h-8 w-8 items-center justify-center rounded bg-purple-100 text-purple-600">
+                                            <span class="material-symbols-outlined text-lg">science</span>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Secondary School</h3>
+                                        <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                                            Academic excellence combined with character development. Full boarding facilities available for focused learning.
+                                        </p>
+                                        <Link class="mt-4 inline-flex items-center text-sm font-bold text-primary" to="/programs">Learn more</Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* CTA / Testimonials Section */}
+                    <section class="bg-white dark:bg-slate-800 py-16">
+                        <div class="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+                            <div class="grid gap-12 lg:grid-cols-2 items-center">
+                                {/* Testimonial */}
+                                <div class="relative rounded-2xl bg-slate-50 dark:bg-slate-900 p-8 sm:p-12">
+                                    <span class="material-symbols-outlined absolute left-8 top-8 text-6xl text-slate-200 dark:text-slate-700">format_quote</span>
+                                    <blockquote class="relative z-10">
+                                        <p class="text-xl font-medium leading-relaxed text-slate-800 dark:text-slate-200">
+                                            "Sending our three children to Crownbest was the best decision we made. The teachers are incredibly supportive, and the boarding facilities feel just like a second home. The academic improvement has been remarkable."
+                                        </p>
+                                        <footer class="mt-8 flex items-center gap-4">
+                                            <div class="h-12 w-12 rounded-full bg-slate-300 bg-cover bg-center" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAt5qyrCWF4jM0hCNa0Ecgatq0FpMNqtrJS_OotKpqrhQ5wf4mtTrL95e8o8qC0aQJJtX6SrkMNwcVHnI5CF44bolf4gb1PBZbT73wCGZ42_LLsXIJGw1wZVZ0gnq8khniA530L61WJUVOxumbP5KcDey1DdbIz8wCCnRks4kkvqj15r80o7mqFbU51QpWdnhRp3GSRepJ-Mn7-YMrES9CikGuMaxEBgP4-L1fwE3NIkPU3JXGrBh5VmzqxhX980xF8TwFJ0dU4LrY")'}}></div>
+                                            <div>
+                                                <p class="font-bold text-slate-900 dark:text-white">Mr. & Mrs. Adebayo</p>
+                                                <p class="text-sm text-slate-500 dark:text-slate-400">Parents of Year 8 & 10 Students</p>
+                                            </div>
+                                        </footer>
+                                    </blockquote>
+                                </div>
+                                {/* Call to Action Text */}
+                                <div class="flex flex-col gap-6">
+                                    <h2 class="text-3xl font-black text-slate-900 dark:text-white">Ready to join the Crownbest family?</h2>
+                                    <p class="text-lg text-slate-600 dark:text-slate-300">
+                                        We accept applications year-round based on availability. Schedule a visit to see our facilities in person or start your application online today.
+                                    </p>
+                                    <div class="flex flex-wrap gap-4 pt-2">
+                                        <Link to="/admissions" class="flex min-w-[140px] items-center justify-center rounded-lg bg-primary h-12 px-6 text-base font-bold text-white transition hover:bg-blue-600">
+                                            Apply Now
+                                        </Link>
+                                        <Link to="/contact" class="flex min-w-[140px] items-center justify-center rounded-lg border-2 border-slate-200 dark:border-slate-700 h-12 px-6 text-base font-bold text-slate-700 dark:text-white transition hover:bg-slate-50 dark:hover:bg-slate-700">
+                                            Contact Us
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            );
+        };
+
+        const AdmissionsPage = () => {
+            return (
+                <div class="animate-fade-in">
+                    <section class="relative">
+                        <div class="absolute inset-0 bg-slate-900/40 z-10"></div>
+                        <div class="h-[500px] w-full bg-cover bg-center bg-no-repeat relative" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB7_J9cDSQ9D0wvHJwfCWUg7C_BqHUg4rHjBI1eE6P4J_Zh4wyJlCza09vDk5MEh2Vv0MroqeBHaPjM8XV1gEJw-sKHp1kL7ObbZHgJuZVzBjWMuZuUZ2G118brr6BbxA7oVWXBsWXmRyV4tbx5m2Jgr1wO9-Qqd586E65UJvCwRJvPVKZdbBlEAf1ekmUjGDubjgVRhcDah1hrZfrtThtSJ3G5ZTw1yYo2fioRiGA7GF5_lryP7_nO33oF2Mdb1SQf9Ob_n0mWHVY')"}}>
+                            <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 max-w-4xl mx-auto">
+                                <span class="inline-block py-1 px-3 rounded-full bg-blue-500/30 border border-blue-400/50 text-white text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-sm">
+                                    Enrollment Open 2024/2025
+                                </span>
+                                <h1 class="text-white text-4xl md:text-6xl font-black leading-tight tracking-tight mb-4 drop-shadow-lg">
+                                    Join the Crownbest Family
+                                </h1>
+                                <p class="text-slate-100 text-lg md:text-xl font-medium max-w-2xl mb-8 drop-shadow-md">
+                                    Nurturing future leaders through excellence in Creche, Primary, and Secondary education.
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <button class="bg-primary hover:bg-blue-600 text-white h-12 px-8 rounded-lg text-base font-bold transition-all shadow-lg shadow-blue-900/50 flex items-center justify-center gap-2">
+                                        <span class="material-symbols-outlined">edit_document</span>
+                                        Apply Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    {/* Intro Text */}
+                    <section class="py-16 px-4 bg-white dark:bg-slate-900">
+                        <div class="max-w-3xl mx-auto text-center">
+                            <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-4">A Place to Grow, Learn, and Thrive</h2>
+                            <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-lg">
+                                At Crownbest School, we believe that every child is unique. Our admission process is designed to help us understand your child's strengths and potential. We welcome students from all backgrounds into our vibrant day and boarding community.
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* Admission Process Timeline */}
+                    <section class="py-16 px-4 bg-slate-50 dark:bg-slate-800/50 border-y border-slate-200 dark:border-slate-700">
+                        <div class="max-w-4xl mx-auto">
+                            <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-12 text-center">Admission Process</h2>
+                            <div class="grid grid-cols-[50px_1fr] gap-x-6 px-4">
+                                {/* Step 1 */}
+                                <div class="flex flex-col items-center">
+                                    <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20 shadow-sm z-10">
+                                        <span class="material-symbols-outlined">shopping_cart</span>
+                                    </div>
+                                    <div class="w-[2px] bg-slate-200 dark:bg-slate-600 h-full min-h-[60px]"></div>
+                                </div>
+                                <div class="pb-10 pt-2">
+                                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">1. Purchase Application Form</h3>
+                                    <p class="text-slate-600 dark:text-slate-400 mt-1">
+                                        Application forms can be purchased online via our portal or offline at the school administrative office. 
+                                        <span class="font-medium text-primary block mt-1">Cost: $50.00 (Non-refundable)</span>
+                                    </p>
+                                </div>
+                                {/* Step 2 */}
+                                <div class="flex flex-col items-center">
+                                    <div class="w-12 h-12 rounded-full bg-white dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-sm z-10">
+                                        <span class="material-symbols-outlined">upload_file</span>
+                                    </div>
+                                    <div class="w-[2px] bg-slate-200 dark:bg-slate-600 h-full min-h-[60px]"></div>
+                                </div>
+                                <div class="pb-10 pt-2">
+                                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">2. Submit Documents</h3>
+                                    <p class="text-slate-600 dark:text-slate-400 mt-1">
+                                        Complete the form and submit it along with all required supporting documents (see requirements below) to the admissions office or upload them to your applicant profile.
+                                    </p>
+                                </div>
+                                {/* Step 3 */}
+                                <div class="flex flex-col items-center">
+                                    <div class="w-12 h-12 rounded-full bg-white dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-sm z-10">
+                                        <span class="material-symbols-outlined">quiz</span>
+                                    </div>
+                                    <div class="w-[2px] bg-slate-200 dark:bg-slate-600 h-full min-h-[60px]"></div>
+                                </div>
+                                <div class="pb-10 pt-2">
+                                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">3. Entrance Assessment</h3>
+                                    <p class="text-slate-600 dark:text-slate-400 mt-1">
+                                        Candidates for Primary and Secondary levels will be invited for a written Computer Based Test (CBT) and an oral interview. Creche admission involves a play-based observation.
+                                    </p>
+                                </div>
+                                {/* Step 4 */}
+                                <div class="flex flex-col items-center">
+                                    <div class="w-12 h-12 rounded-full bg-white dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-sm z-10">
+                                        <span class="material-symbols-outlined">verified</span>
+                                    </div>
+                                </div>
+                                <div class="pt-2">
+                                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">4. Offer of Admission</h3>
+                                    <p class="text-slate-600 dark:text-slate-400 mt-1">
+                                        Successful candidates will receive a provisional letter of admission. Acceptance fees must be paid within 2 weeks to secure the slot.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            );
+        };
+
+        const ProgramsPage = () => {
+            return (
+                <div class="animate-fade-in">
+                    {/* Hero Section */}
+                    <div class="relative w-full">
+                        <div class="flex min-h-[500px] flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-8 text-center" style={{backgroundImage: 'linear-gradient(rgba(19, 127, 236, 0.8), rgba(16, 25, 34, 0.85)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDvVmUEUVXuQYW-Sw2nAUu9RCQ4sqFvKLgq4bhT1B7efnoZAKxgqylLJ-vL_BMj-9LDnH0uAjf7qzQ0G1lIqowyoIO_JtSWQyhpeqIUNRyx5w2vrgxV48sHISf9XY8_d6SfQPxTHvi-gn7poJi1FonXDM9KDoUnRbEdVsW8TgHRN4xDehzV325ealxPcs1YIReW0mbKerwA6X4WT6lqReFbKfD8_oQZV7dryvs09XmAhJ3nwrAD8aVRRxtWZ3zJBLrWdGt-ybkwE88")'}}>
+                            <div class="max-w-3xl flex flex-col gap-4">
+                                <span class="text-blue-100 font-bold tracking-wider text-sm uppercase">Academic Excellence</span>
+                                <h1 class="text-white text-4xl md:text-6xl font-black leading-tight tracking-[-0.033em]">
+                                    Shaping Future Leaders From Cradle to College
+                                </h1>
+                                <h2 class="text-blue-50 text-base md:text-xl font-normal leading-relaxed max-w-2xl mx-auto">
+                                    Discover our comprehensive academic programs designed to nurture excellence, character, and creativity from early years to secondary education.
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-7xl mx-auto py-20 px-4 md:px-10">
+                         {/* Creche */}
+                        <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center mb-24">
+                            <div class="w-full lg:w-1/2 relative group">
+                                <div class="absolute -inset-2 bg-primary/20 rounded-xl blur-lg"></div>
+                                <div class="relative h-[400px] w-full rounded-xl overflow-hidden shadow-xl" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQ5YNgi5w0MlaDylbTqhFab9OgJBJ5oFw1sNsm3otPMNxije6gnOWl6XDBXXsmndcE8uMqqUZVf5ORypt0AgMGCc3WSLYTVNLNVTDho8FUWo00I5GSdxjd97C6DJvmLf4dAJAlLm3Nt4DBMjDC1OwLBRdYzG04UEUuvZgBUSSO2uyuSxHKMaRmirTK4s5XKsPRtm9gYfVBShunDv6Pj8daVbokhH_JugYeFMl-Fy1iJ9CSZ3B7I74rbJOzlrEgygmTGRs5YSl44yA')", backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
+                            </div>
+                            <div class="w-full lg:w-1/2 flex flex-col gap-6">
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 w-fit">
+                                    <span class="material-symbols-outlined text-primary text-sm">child_care</span>
+                                    <span class="text-primary text-xs font-bold uppercase tracking-wider">Ages 3 Months - 5 Years</span>
+                                </div>
+                                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">Nurturing Curiosity in the Early Years</h2>
+                                <p class="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
+                                    Our Creche and Nursery program is built on the philosophy that every child is unique. We provide a safe, home-away-from-home environment where children learn through play, exploration, and social interaction.
+                                </p>
+                            </div>
+                        </div>
+
+                         {/* Primary */}
+                        <div class="flex flex-col-reverse lg:flex-row gap-12 lg:gap-20 items-center mb-24">
+                            <div class="w-full lg:w-1/2 flex flex-col gap-6">
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 dark:bg-purple-900/30 w-fit">
+                                    <span class="material-symbols-outlined text-purple-600 text-sm">school</span>
+                                    <span class="text-purple-600 dark:text-purple-400 text-xs font-bold uppercase tracking-wider">Grades 1 - 6</span>
+                                </div>
+                                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">Building a Solid Academic Foundation</h2>
+                                <p class="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
+                                    Our primary curriculum blends the best of national and international standards. We focus on core literacy and numeracy skills while fostering critical thinking, digital literacy, and moral character.
+                                </p>
+                            </div>
+                            <div class="w-full lg:w-1/2 relative group">
+                                <div class="absolute -inset-2 bg-purple-500/20 rounded-xl blur-lg"></div>
+                                <div class="relative h-[450px] w-full rounded-xl overflow-hidden shadow-xl" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCB_8wXgrCP0kK_N8s00mWTPE5RD_bXJJOmDc4m4Q1unjYXLML52AyiGeGY4meWjWqdar0hDRZtuMmWBEacUSaLz9e1LfX8zYc4JIQCopfbMZxUorz5-re6sGI0fYiQ8eFcVmcAKYiokY2ekIi_7BTjAbJ5sWUhecUzpOCxtTs78NiQdpWqI0zt349bYcS5eQf4PzBJmCzHrmTUkeSfhZqA2q0EfeFIcY3_L7_ndOg9v-tVPwrs1JWbNkf-hqrkeBrew25nvwITX-M')", backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
+                            </div>
+                        </div>
+
+                        {/* Secondary */}
+                        <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+                            <div class="w-full lg:w-1/2 relative group">
+                                <div class="absolute -inset-2 bg-orange-500/20 rounded-xl blur-lg"></div>
+                                <div class="relative h-[450px] w-full rounded-xl overflow-hidden shadow-xl" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuD9U7FFsMS3qBhkYqeuOJWaDwu-TF3oSEoJbS-FhPJUxwVWOtnW3OcFWZpimsrw2i8pbIbIPIn64_M8v53h-lWXvM-VaF8Tq-vrz0iYQc1NK_AvSAwyJHKiBHxkHv8s_BdSjdRjzjDMtVa2eKAe8-B8bHmXZZ__gBQ3qVxb1W_h3kJCJyewRH6ty8PbIsFysffEo43ApvaY4Y87srsdAYxr89aFweVqTSTXF8BVajT1Zl7wAM1bQcvzpVSEk4ITT2-iDs078Zin8WI')", backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
+                            </div>
+                            <div class="w-full lg:w-1/2 flex flex-col gap-6">
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 dark:bg-orange-900/30 w-fit">
+                                    <span class="material-symbols-outlined text-orange-600 text-sm">history_edu</span>
+                                    <span class="text-orange-600 dark:text-orange-400 text-xs font-bold uppercase tracking-wider">JSS1 - SS3</span>
+                                </div>
+                                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">Preparing Leaders for the Future</h2>
+                                <p class="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
+                                    Our secondary school program offers both Day and Boarding options. We provide rigorous academic preparation for WAEC, NECO, and IGCSE examinations, alongside leadership training.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const AboutPage = () => {
+            return (
+                <div class="animate-fade-in">
+                    <section class="relative w-full h-[400px] sm:h-[500px] bg-cover bg-center bg-no-repeat flex items-center justify-center" style={{backgroundImage: 'linear-gradient(rgba(16, 25, 34, 0.7) 0%, rgba(16, 25, 34, 0.5) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBzpkyS2zLcp0PFxfurjH68WzedTLjyfFutDgIxUS70mDil2QhYee2ODFQInBflyxl7pLRxVOtczWVUuiU3kkCZgrs1d7QoMFHrnSxrijh_A5WVlK8uw-CMcXnwlmL1i0NOTvBgXsk_rTOCqm6ykVMmrwcOoWCVw5EShhlBtQYkkr-u68Ovo-d6vCmKVA2fkoWJoqKvjWWuAn10FP-qziKpOmJK12IwmL5IcCoFj8mEWxI3ff9g-7dWKiWStwFXRutxRw5PH6b1DKY")'}}>
+                        <div class="max-w-[960px] text-center px-4">
+                            <h1 class="text-white text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-[-0.033em] mb-4">
+                                About Crownbest School
+                            </h1>
+                            <p class="text-slate-200 text-lg sm:text-xl font-medium max-w-[720px] mx-auto">
+                                Building a legacy of academic excellence and character since 2005. We nurture the leaders of tomorrow in a supportive and challenging environment.
+                            </p>
+                        </div>
+                    </section>
+
+                    <div class="w-full bg-primary text-white py-8">
+                        <div class="max-w-[1280px] mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/20">
+                            <div class="flex flex-col items-center">
+                                <span class="text-3xl md:text-4xl font-bold">18+</span>
+                                <span class="text-sm opacity-90 font-light mt-1">Years of Excellence</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <span class="text-3xl md:text-4xl font-bold">100%</span>
+                                <span class="text-sm opacity-90 font-light mt-1">Pass Rate</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <span class="text-3xl md:text-4xl font-bold">500+</span>
+                                <span class="text-sm opacity-90 font-light mt-1">Students Enrolled</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <span class="text-3xl md:text-4xl font-bold">45</span>
+                                <span class="text-sm opacity-90 font-light mt-1">Expert Teachers</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <section class="py-16 px-4 md:px-10 bg-white dark:bg-[#1a2632]">
+                        <div class="max-w-[1100px] mx-auto grid md:grid-cols-2 gap-12 items-center">
+                            <div class="flex flex-col gap-6">
+                                <div class="inline-flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-sm">
+                                    <span class="w-8 h-[2px] bg-primary"></span>
+                                    Our Philosophy
+                                </div>
+                                <h2 class="text-[#0d141b] dark:text-white text-3xl md:text-4xl font-bold leading-tight">
+                                    Holistic Education for a Changing World
+                                </h2>
+                                <p class="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
+                                    At Crownbest, we believe in a holistic approach to education that balances academic rigor with character development. We strive to create an environment where every child feels valued, challenged, and inspired.
+                                </p>
+                            </div>
+                            <div class="relative">
+                                <div class="relative z-10 rounded-xl overflow-hidden shadow-xl aspect-[4/3]" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBtSsA4oTdG7pptvxfW_WVJtAyDP_J_TtPCIVSvFHxbgiPUopr-3uLK_t9sQTRuir0Hx9bO4sj9-dUHV2jeDxRPWku7xDOpvFmsmxcYuy_Eovl8Mkl-DQ1XOIA_Uq3EgACy1X032PyVvxzM7MBrBuql06hG8qZD9P18hebBSR-z_4lfu_a6IFNW3rWDlgAhkOT_UllnwI3wMgYTa6HTa9Y2MG5FRBQJzhjIxKWFYQQpOOYjHbNPJvoCOIfJN_ljT-ntxtwqHEZT1fY")', backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            );
+        };
+
+        const NewsPage = () => {
+            return (
+                <div class="animate-fade-in w-full max-w-7xl mx-auto px-4 md:px-10 py-10">
+                    <div class="flex flex-col gap-2 mb-8">
+                        <div class="max-w-2xl">
+                            <h1 class="text-slate-900 dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-tight mb-3">News & Events</h1>
+                            <p class="text-slate-500 dark:text-slate-400 text-base md:text-lg">Stay updated with the latest happenings, student achievements, and important announcements.</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-10 w-full">
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/20 p-5 shadow-sm">
+                            <div class="flex items-start gap-4">
+                                <div class="mt-1 flex-shrink-0 size-10 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center text-primary dark:text-blue-300">
+                                    <span class="material-symbols-outlined">notifications_active</span>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <p class="text-slate-900 dark:text-white text-base font-bold leading-tight">Important Notice: School closed on Friday</p>
+                                    <p class="text-slate-600 dark:text-slate-300 text-sm md:text-base">Due to severe weather forecasts, all campuses will be closed. Please check your email for remote learning assignments.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
+                        <div class="lg:col-span-8 flex flex-col gap-10">
+                            {/* Featured Article */}
+                            <article class="group relative rounded-2xl overflow-hidden bg-white dark:bg-slate-800 shadow-lg ring-1 ring-slate-100 dark:ring-slate-700 transition-all hover:shadow-xl">
+                                <div class="relative h-64 md:h-80 w-full overflow-hidden">
+                                    <div class="h-full w-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBbgXJKBryt01QkxD-MDgFR1g4hn0eeKQ0Pl2DZssCydUP4sqfa0kCQrSfGNTteDHaVXaz_dusIw59wwJ8q4ICQLai-qPQuD3C5k2cC_vn1-8ANwT6jl-TmGMTac68MZ-hODKGX9Dex1JYAy6yMOAs_anLuNC8aH9K8Vqhor2cmuWoxyDYWfTGLKeiPjPNJtDsxEbSqrwKwYCJRm1uUxohPHiEQStOrRwJij6oa8533aHcOxJzvVEBH-OPswnyPA_g8Orcu843Ur4I')"}}></div>
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                                    <div class="absolute top-4 left-4">
+                                        <span class="inline-flex items-center rounded-full bg-primary/90 px-3 py-1 text-xs font-bold text-white shadow-sm backdrop-blur-sm">
+                                            Featured
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="p-6 md:p-8 relative">
+                                    <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 mb-3">
+                                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">calendar_today</span> Oct 24, 2023</span>
+                                        <span>•</span>
+                                        <span class="text-primary font-medium">Primary School</span>
+                                    </div>
+                                    <h3 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3 leading-tight group-hover:text-primary transition-colors">Science Fair Winners Announced</h3>
+                                    <p class="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">Our primary students displayed exceptional creativity and problem-solving skills at this year's Annual Science Fair. From robotics to sustainable energy models, the projects were truly inspiring.</p>
+                                </div>
+                            </article>
+                        </div>
+                        
+                        <div class="lg:col-span-4 space-y-8">
+                            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 p-6 sticky top-24">
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Upcoming Events</h3>
+                                <div class="space-y-6">
+                                    <div class="flex gap-4 group cursor-pointer">
+                                        <div class="flex-shrink-0 w-16 h-16 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex flex-col items-center justify-center text-center border border-blue-100 dark:border-blue-800">
+                                            <span class="text-xs uppercase font-bold text-blue-400 dark:text-blue-300">Nov</span>
+                                            <span class="text-2xl font-black text-primary">12</span>
+                                        </div>
+                                        <div class="flex flex-col justify-center">
+                                            <h4 class="text-slate-900 dark:text-white font-bold leading-tight group-hover:text-primary transition-colors">Mid-Term Break</h4>
+                                            <span class="text-slate-500 dark:text-slate-400 text-xs mt-1">All Day • Campus Closed</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-4 group cursor-pointer">
+                                        <div class="flex-shrink-0 w-16 h-16 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex flex-col items-center justify-center text-center border border-blue-100 dark:border-blue-800">
+                                            <span class="text-xs uppercase font-bold text-blue-400 dark:text-blue-300">Dec</span>
+                                            <span class="text-2xl font-black text-primary">15</span>
+                                        </div>
+                                        <div class="flex flex-col justify-center">
+                                            <h4 class="text-slate-900 dark:text-white font-bold leading-tight group-hover:text-primary transition-colors">Christmas Carol Service</h4>
+                                            <span class="text-slate-500 dark:text-slate-400 text-xs mt-1">05:00 PM • Main Auditorium</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const GalleryPage = () => {
+            return (
+                <div class="animate-fade-in">
+                    <div class="w-full bg-white dark:bg-[#101922] py-10 px-4 md:px-10 lg:px-40">
+                         <h1 class="text-center text-4xl md:text-5xl font-black leading-tight tracking-[-0.033em] mb-4 text-slate-900 dark:text-white">Our Moments</h1>
+                         <p class="text-center text-slate-500 dark:text-slate-400 mb-10">A visual journey through life at Crownbest.</p>
+                         
+                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
+                            {[
+                                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBlUxC5pPdkbNZ62mg4hgUqEZnN-wad5PIHhBPuJoy916oTFdQybWQ2rDVQpe9k8J-nC3gd_Hrw7ZKH1w1TdXDpveaEAbiQBnyugYB4Ti531AD9-HGDUWz0lYBWW_ePksrNOQz2Ke-56RDpLkKm8jpHSs9WUgh3tZMsoWECShWEpYbxric5HHS9I39W2IptNY9dO0RaYQNLfPd5nKhzZNLTkTb5WLa82v9XZiWwaweW-1ni6vgnU0UnKmh6vJdUWFEue_phr-xq2AM", title: "Science Fair"},
+                                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBCgHH2YuOylRH3J4WT0jcKBh2RGAxmO2blfNmts0ZlIMD9JvHONlgCzFSB1uz1k8sLIoT3_BzZlgO-_46Xs40O19DVmxBJ1QveyQu-oyRei-3cDd79FK4N-2OUr9h49dEuWvcfH2loekY2qcjbt5rPvuM48SoJmpxfNTgNLNf4IQ2-SUm3N9ZU5llw9RkTfFCPzhftE1E3OUCp_faacNhTU6FTz4snqI8uv0SpHciEYx2GhtSoTf09kE4cXRks7Apurb9Ipk4w6UY", title: "Interactive Playtime"},
+                                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuACpQGySXJzNi5_RHAcKx7MxKIRFUoWSCitVUHNVJVKRBeXe6JyiwfxYoKx468sEx6WxeJcDIbkl50s_-xlI5wL-D64J33V96rscqNOSj6VaEwpISeiwAL-2xXsICYA4vzRMX6Tj9EULEP1ybeUCmNAUr5uSehpW_pyONjl6f_Xlkn2N7ymVrXFmrSUu1sBGEDq3sjbs-1Y07CPO7lQOGQ0vpW83jQKAe_VjDgE6k1z0XhA54cg36eKGrMNbR-hURv4gwjQXxVBx7w", title: "ICT Lab"},
+                                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAjsoW4KWpCMLUgl-VMPzRlJIu7_dnTwaLigb2P2Tz83COMY1gFgMAEPaPyJnSaGqVCMK7z2eMvxecpd1lh7ABdC4PDguYUtkZbxl3xq4S3yhGLCMK3_7gLlrf9rKQRs_DC8-32uBJodEuQIftjKRB7RHWNgfgLQs7-uhTJY2uKplZmmTmD0zXTvCAn_81EqTYoAnPMiaVTtdkO2AoCHOeTvLrNF1VHYKfv4A0M569HGraMUlnNMsnSyOTOrgOrI3SaEK8mRDhB2rE", title: "Graduation"},
+                                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuB6ybOYtNIuIVpBdW7Is18ErUwgETbgmWaenfU04UBcF9NUuDniTmv4ST4PJkPGBlYX_0-NZ9mIqPHFPliW7W31D5ZNJ-yPiwCU24hpCchw946MPrJS7MUMF49DPLWMiGzEKdvW67lvltlwLpqoimcJbzH8btKIjKluvOVqzAUSZJkIDERp7R4__Pv9sPm6eSTfSFBTxlfWbquTV7iZFXYlP6g2WdcXmkb_OcZ5lxD53p7mhSKyy78kHq19Y6HMG9ZGxVcbYeoqePw", title: "Art Exhibition"},
+                                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAS9wh9X8N7zDwj1vvJm8TnPGiL2qMhAslb5QooaYJ8-6mvzEVcBqVlfWHWnWKWMysTrBddFWRoUMEAOkkBu8nPGSDc2VKiNg1FnC83zyTRKv8zXhLy2Lfk3qYZfPR_RPN6Ddzjr0HyqB6QSd_ARL-D095Tce6mzn-eQMwHx-D-ZbVHxafU9OQrhSB1fStAAHmG_NQvl9plCy8NcmOCzcaU_rN0458Sx2PddkVk6Jl31oOwEZd5dA3K80_HrEjUXRvjrOeKrfQGkdU", title: "Boarding House"},
+                            ].map((item, index) => (
+                                <div key={index} class="group relative overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800 aspect-[4/3] cursor-pointer shadow-sm hover:shadow-lg transition-all duration-300">
+                                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{backgroundImage: `url('${item.img}')`}}></div>
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                                    <div class="absolute bottom-0 left-0 p-5 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                        <h3 class="text-white text-lg font-bold leading-tight">{item.title}</h3>
+                                    </div>
+                                </div>
+                            ))}
+                         </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const StaffPage = () => {
+             const staff = [
+                {name: "Mr. David Okon", role: "Principal, Secondary", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDqT0qtgiMBqgjLZWjD3G2S6y9WGk1BlLYGhb0VGzknd8WwZuWuTRLhz7-S00e6blwe1xOiPq8A_fytZnqS4IO1hE7Kv-2nyr5vFYocOMRwuljBEGUGoh8uNrAEMGb8wUJtAvECOggv-vvmXDeEtNT2lTw9GB9dP2HcWAvSdkgOhbPxM5fhli5xmnubRK7TRwlcidI3TRr65tobOfF3aBTFAogl3UKFykqToSr3ED865qWEu_5eYC28064WQQ_AGtJiniwJMf2g-zs"},
+                {name: "Mrs. Sarah Johnson", role: "Head of Creche", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBgJhzW-jH6q0Nb__C6EP8z9eK1mU2ywW7E4Es9ulfHBKMp0QzCUA-ROOJkrSmUmhJ5wIJ7O0OZYYIseQ0K_GC5hOEnwWWMS80si-RWbt1_vc_GSI0FpR_4e0dBdqh5gB-vMxzhFpOFmkWAHHqs6detn9mnnnron88jsmW1jOH0RwVoENJrlJ7BTHWrtxXX2G9mSkG_dw7H6COGsO7_yQEaZYzEFS4IFmuxtAZFCKvTXrucO3PmE_9n8hH6qix5JyBzHwi_KF8fJj4"},
+                {name: "Mr. James Adebayo", role: "Science Lead", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDap-1orYOKb9xM8am4qBzcsWzt96Yr9i_CKwnfWr6UkoPEofYSvFQfyvENR0SKaiyCCvNdzTmezSb0rbZabVb-aRUgAN01PEfvW4jwI6JEy5LJ12byJ4fZbQwwh4Rl7-ScaI9ZeMbHXbBl0fF5pD1-qsfo0pSKtedqYOY4B1gSZiMnG7fiCnBeyWCzYO_gNoTE2mH_XFob376-_HJel7PHMoFp4vVSutl9Sl7fBCdvQgS2vh_-2kx6hnHbad4t64vKhJsKP8Y92ek"},
+                {name: "Ms. Amina Yusuf", role: "Administrator", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCTIiucvRask1d3EnMxTqMhJ6jMhpL-NjdR0eh9sKdv-fGth_DAQgrLKGUaV5mXCwjrObx0554q4wO3jXXQBSrReU3ECmLpoRjLxAMK-IJ5BWO67tNhv3FgMwBYNT8BVIY3EZH6YpSCM7FSAsB0HmI-BfuUkjMzrm5AfXsKS1YfM0wBs1o83ZpD4Baszv2BLPTCKt58V8Hdze3aCsSJP9VLiQvtl_bg-zB8uw16wI_kBEQl78qbEqcqmGkjYd8NAWzTBJsBtyJ8utQ"},
+                {name: "Dr. Peter Obi", role: "Math HOD", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCvnwKcsvGNHTvPe0DYM_xxg7QR6WyVy_rYIM3bhVQE3iOSdP65aW1jyswKW0GeqgfFuA5TN3gNK-wy-ASOKMDyw8yTfS7FgmO7FMXY8NrNFu4urhJpByptwgJ-sYSwt4xawYb3Up-nyOQtJ0px4W64IhcqCBSEN72t-KbtOgoWtnLygrupylxiwPMPQE6DbObnDypX_BTATc9J_uTDL0G_nqNnf45cm5fSaoxT_meEqHbnjmr61_9YLwb59pRgzfwsRuA6KldiS3A"},
+                {name: "Mrs. Chioma Eze", role: "Languages Head", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBH_c9Alf67kPtewnudkaNaTm6dadawD3OpvArvZeWnU8RZxqhbvJCLwUFU3TzX7o9hqoDSYx0MTrMVDwolC7ub5C7K_zrxYQR3acB2gwRkbXO4fRvtWOWnQOu7pE5nKIaaHn8njH9wPr7P3iFtVncGesotzB06Kjafhe0h09Q1dRxMYR8ld6OwacVMyWNIS0v0TdM7_FnE85RaL12E8yHgX9r8kDvuRg8ZZguu3J0jf2bg9A_uX20Lew0GyUc5RdImmGHlSsPj1Rw"}
+            ];
+
+            return (
+                <div class="animate-fade-in w-full max-w-[1280px] mx-auto px-4 py-12">
+                    <h1 class="text-slate-900 dark:text-white text-4xl sm:text-5xl font-black mb-10">Staff Directory</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {staff.map((person, index) => (
+                            <div key={index} class="group flex flex-col bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 dark:border-slate-700 overflow-hidden">
+                                <div class="flex p-5 gap-5 items-start">
+                                    <div class="w-24 h-24 shrink-0 bg-center bg-no-repeat bg-cover rounded-lg bg-slate-200" style={{backgroundImage: `url('${person.img}')`}}></div>
+                                    <div class="flex flex-col gap-1">
+                                        <h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight">{person.name}</h3>
+                                        <p class="text-primary font-medium text-sm">{person.role}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const TestimonialsPage = () => {
+            return (
+                <div class="animate-fade-in px-4 md:px-40 py-16">
+                     <div class="max-w-[960px] mx-auto text-center mb-12">
+                        <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4">Stories from Crownbest</h1>
+                        <p class="text-lg text-slate-600 dark:text-slate-400">Hear directly from the families and students who make our community special.</p>
+                     </div>
+                     <div class="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="flex flex-col bg-surface-light dark:bg-surface-dark p-8 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+                            <blockquote class="text-lg text-slate-700 dark:text-slate-300 mb-6">"The boarding facilities are top-notch and my son has become so independent since joining."</blockquote>
+                            <p class="font-bold">Sarah Johnson <span class="text-xs font-normal text-slate-500 block">Parent</span></p>
+                        </div>
+                        <div class="flex flex-col bg-surface-light dark:bg-surface-dark p-8 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+                            <blockquote class="text-lg text-slate-700 dark:text-slate-300 mb-6">"Crownbest prepared me not just for exams, but for life at university. The teachers believed in me."</blockquote>
+                            <p class="font-bold">Michael Chen <span class="text-xs font-normal text-slate-500 block">Alumni</span></p>
+                        </div>
+                        <div class="flex flex-col bg-surface-light dark:bg-surface-dark p-8 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+                            <blockquote class="text-lg text-slate-700 dark:text-slate-300 mb-6">"The Creche environment is so nurturing. I never worry when I drop off my toddler."</blockquote>
+                            <p class="font-bold">David Okon <span class="text-xs font-normal text-slate-500 block">Parent</span></p>
+                        </div>
+                     </div>
+                </div>
+            );
+        };
+
+        const ContactPage = () => {
+            return (
+                <div class="animate-fade-in px-4 md:px-40 py-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 py-10 max-w-[1200px] mx-auto">
+                        <div class="flex flex-col gap-8">
+                             <h2 class="text-[#0d141b] dark:text-white text-[32px] font-bold leading-tight">Contact Information</h2>
+                             <div class="flex flex-col gap-4">
+                                <div class="flex gap-4 rounded-xl border border-[#cfdbe7] dark:border-slate-700 bg-white dark:bg-slate-800 p-6 items-start shadow-sm">
+                                    <span class="material-symbols-outlined text-2xl text-primary">location_on</span>
+                                    <div>
+                                        <h3 class="text-lg font-bold dark:text-white">Visit Us</h3>
+                                        <p class="text-slate-500 dark:text-slate-400">Banana Estate, Plot 19/10 Road E, Igbe Laara, Ikorodu, Lagos.</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4 rounded-xl border border-[#cfdbe7] dark:border-slate-700 bg-white dark:bg-slate-800 p-6 items-start shadow-sm">
+                                    <span class="material-symbols-outlined text-2xl text-primary">call</span>
+                                    <div>
+                                        <h3 class="text-lg font-bold dark:text-white">Call Us</h3>
+                                        <p class="text-slate-500 dark:text-slate-400">+234 800 123 4567</p>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-[#cfdbe7] dark:border-slate-700 p-8">
+                            <h2 class="text-2xl font-bold dark:text-white mb-6">Send a Message</h2>
+                            <form class="flex flex-col gap-4">
+                                <input class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white p-3" placeholder="Full Name" />
+                                <input class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white p-3" placeholder="Email Address" type="email" />
+                                <textarea class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white p-3 h-32" placeholder="Message"></textarea>
+                                <button class="bg-primary text-white font-bold py-3 rounded-lg hover:bg-blue-600">Send Message</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Main App Component ---
+
+        const App = () => {
+            return (
+                <div class="flex min-h-screen flex-col">
+                    <Navigation />
+                    <main class="flex-grow w-full">
+                        <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/about" element={<AboutPage />} />
+                            <Route path="/programs" element={<ProgramsPage />} />
+                            <Route path="/admissions" element={<AdmissionsPage />} />
+                            <Route path="/news" element={<NewsPage />} />
+                            <Route path="/gallery" element={<GalleryPage />} />
+                            <Route path="/staff" element={<StaffPage />} />
+                            <Route path="/testimonials" element={<TestimonialsPage />} />
+                            <Route path="/contact" element={<ContactPage />} />
+                        </Routes>
+                    </main>
+                    <Footer />
+                </div>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(
+            <MemoryRouter>
+                <App />
+            </MemoryRouter>
+        );
+    </script>
+</body>
+</html>
